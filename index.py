@@ -20,6 +20,7 @@ Make Cozmo say 'Hello World' in this simple Cozmo SDK example program.
 '''
 
 import cozmo
+from cozmo.util import distance_mm, speed_mmps
 from flask import Flask
 
 
