@@ -25,8 +25,10 @@ from flask import Flask
 
 app = Flask(__name__)
 
-def cozmo_hello(robot: cozmo.robot.Robot, name: str):
-    robot.say_text('Hello ' + name).wait_for_completed()
+def cozmo_hello(name: str):
+    def cozmo_hello_inner(robot: cozmo.robot.Robot):
+        robot.say_text('Hello ' + name).wait_for_completed()
+    return cozmo_hello_inner
 
 @app.route("/")
 def hello():
@@ -35,7 +37,7 @@ def hello():
 @app.route("/hello/<name>")
 @app.route("/hello")
 def say_hello(name="world"):
-    cozmo.run_program(cozmo_hello, name)
+    cozmo.run_program(cozmo_hello(name))
     return "Cozmo says hello {}!".format(name)
 
 if __name__ == '__main__':
