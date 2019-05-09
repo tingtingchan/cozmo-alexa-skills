@@ -30,15 +30,37 @@ def cozmo_hello(name: str):
         robot.say_text('Hello ' + name).wait_for_completed()
     return cozmo_hello_inner
 
+
+def move_forward(robot: cozmo.robot.Robot):
+    robot.drive_straight(distance_mm(150), speed_mmps(50)).wait_for_completed()
+
+
+def move_backward(robot: cozmo.robot.Robot):
+    robot.drive_straight(distance_mm(-150), speed_mmps(50)).wait_for_completed()
+
+
 @app.route("/")
 def hello():
-    return "Hello World!"
+    return "Welcome to the Cozmo API Server!"
+
 
 @app.route("/hello/<name>")
 @app.route("/hello")
 def say_hello(name="world"):
     cozmo.run_program(cozmo_hello(name))
     return "Cozmo says hello {}!".format(name)
+
+
+@app.route("/move/<direction>")
+def move(direction):
+    if direction == "forward":
+        cozmo.run_program(move_forward)
+        return "Moved " + direction
+    elif direction == "backward":
+        cozmo.run_program(move_backward)
+        return "Moved " + direction
+    return direction + " is not a recognized direction"
+
 
 if __name__ == '__main__':
     app.run(debug=True)
