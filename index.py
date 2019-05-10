@@ -30,6 +30,12 @@ from cozmo.util import degrees, distance_mm, speed_mmps
 app = Flask(__name__)
 
 
+async def cozmo_opening(robot: cozmo.robot.Robot):
+    r = await robot.say_text(
+        'Hello, I am Cozmo. Welcome to the Hack-a-thon.').wait_for_completed()
+    return r
+
+
 def cozmo_hello(name: str):
     def cozmo_hello_inner(robot: cozmo.robot.Robot):
         robot.say_text('Hello ' + name).wait_for_completed()
@@ -140,7 +146,8 @@ def drive_to_charger(robot: cozmo.robot.Robot):
 
 
 @app.route("/")
-def hello():
+def opening():
+    cozmo.run_program(cozmo_opening)
     return "Welcome to the Cozmo API Server!"
 
 

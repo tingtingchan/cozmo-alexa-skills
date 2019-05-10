@@ -12,7 +12,7 @@ const LaunchRequestHandler = {
   },
   handle() {
     const options = {
-      url: `https://lazy-warthog-8.localtunnel.me/`
+      url: baseUrl
     };
 
     return request.get(options);
@@ -51,12 +51,14 @@ const MoveForwardIntentHandler = {
       url: baseUrl + `/move/forward`
     };
 
-    await handlerInput.responseBuilder
+    let alexaPromise = await handlerInput.responseBuilder
       .speak(speechText)
       //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
       .getResponse();
 
-    return request.get(options);
+    let cozmoRequest = request.get(options);
+
+    return { alexaPromise, cozmoRequest };
   }
 };
 
@@ -215,8 +217,8 @@ const ErrorHandler = {
 exports.handler = Alexa.SkillBuilders.custom()
   .addRequestHandlers(
     LaunchRequestHandler,
-    MoveForwardIntentHandler,
     HelloWorldIntentHandler,
+    MoveForwardIntentHandler,
     CubeStackIntentHandler,
     DriveToChargerIntentHandler,
     HelpIntentHandler,
