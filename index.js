@@ -10,8 +10,7 @@ const LaunchRequestHandler = {
     return handlerInput.requestEnvelope.request.type === "LaunchRequest";
   },
   handle(handlerInput) {
-    const speechText =
-      "Welcome, this is cozmo. you can say Hello or Help. Which would you like to try?";
+    const speechText = "Hello, I am Cozmo. Welcome to the Hackathon.";
     return handlerInput.responseBuilder
       .speak(speechText)
       .reprompt(speechText)
@@ -74,6 +73,29 @@ const CubeStackIntentHandler = {
     const speechText = "Watch! Cozmo is showing off his cube stacking skill";
     const options = {
       url: `https://itchy-zebra-79.localtunnel.me/cubestack`
+    };
+
+    await handlerInput.responseBuilder
+      .speak(speechText)
+      //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+      .getResponse();
+
+    return request.get(options);
+  }
+};
+
+const DriveToChargerIntentHandler = {
+  canHandle(handlerInput) {
+    return (
+      handlerInput.requestEnvelope.request.type === "IntentRequest" &&
+      handlerInput.requestEnvelope.request.intent.name ===
+        "DriveToChargerIntent"
+    );
+  },
+  async handle(handlerInput) {
+    const speechText = "Cozmo You did great!";
+    const options = {
+      url: `https://itchy-zebra-79.localtunnel.me/drivetocharger`
     };
 
     await handlerInput.responseBuilder
@@ -176,6 +198,7 @@ exports.handler = Alexa.SkillBuilders.custom()
     HelloWorldIntentHandler,
     MoveForwardIntentHandler,
     CubeStackIntentHandler,
+    DriveToChargerIntentHandler,
     HelpIntentHandler,
     CancelAndStopIntentHandler,
     SessionEndedRequestHandler,
