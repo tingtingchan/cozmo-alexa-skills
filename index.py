@@ -26,6 +26,7 @@ from flask import Flask
 
 app = Flask(__name__)
 
+
 def cozmo_hello(name: str):
     def cozmo_hello_inner(robot: cozmo.robot.Robot):
         robot.say_text('Hello ' + name).wait_for_completed()
@@ -37,7 +38,44 @@ def move_forward(robot: cozmo.robot.Robot):
 
 
 def move_backward(robot: cozmo.robot.Robot):
-    robot.drive_straight(distance_mm(-150), speed_mmps(50)).wait_for_completed()
+    robot.drive_straight(distance_mm(-150), speed_mmps(50)
+                         ).wait_for_completed()
+
+
+def cube_stack(robot: cozmo.robot.Robot):
+    # Attempt to stack 2 cubes
+
+    # Lookaround until Cozmo knows where at least 2 cubes are:
+    lookaround = robot.start_behavior(
+        cozmo.behavior.BehaviorTypes.LookAroundInPlace)
+    cubes = robot.world.wait_until_observe_num_objects(
+        num=2, object_type=cozmo.objects.LightCube, timeout=60)
+    lookaround.stop()
+
+    if len(cubes) < 2:
+        print("Error: need 2 Cubes but only found", len(cubes), "Cube(s)")
+    else:
+        # Try and pickup the 1st cube
+        current_action = robot.pickup_object(cubes[0], num_retries=3)
+        current_action.wait_for_completed()
+        if current_action.has_failed:
+            code, reason = current_action.failure_reason
+            result = current_action.result
+            print("Pickup Cube failed: code=%s reason='%s' result=%s" %
+                  (code, reason, result))
+            return
+
+        # Now try to place that cube on the 2nd one
+        current_action = robot.place_on_object(cubes[1], num_retries=3)
+        current_action.wait_for_completed()
+        if current_action.has_failed:
+            code, reason = current_action.failure_reason
+            result = current_action.result
+            print("Place On Cube failed: code=%s reason='%s' result=%s" %
+                  (code, reason, result))
+            return
+
+        print("Cozmo successfully stacked 2 blocks!")
 
 
 @app.route("/")
@@ -61,6 +99,12 @@ def move(direction):
         cozmo.run_program(move_backward)
         return "Moved " + direction
     return direction + " is not a recognized direction"
+
+
+@app.route("/cubestack")
+def cubeStack():
+    cozmo.run_program(cube_stack)
+    return "Cozmo is stacking cubes"
 
 
 if __name__ == '__main__':
