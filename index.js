@@ -40,9 +40,12 @@ const MoveForwardIntentHandler = {
     return (
       handlerInput.requestEnvelope.request.type === "IntentRequest" &&
       handlerInput.requestEnvelope.request.intent.name === "MoveIntent" &&
-      (handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value === "forward" ||
-      handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value === "forwards" || 
-      handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value === "up")
+      (handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value ===
+        "forward" ||
+        handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value ===
+          "forwards" ||
+        handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value ===
+          "up")
     );
   },
   async handle(handlerInput) {
@@ -51,14 +54,14 @@ const MoveForwardIntentHandler = {
       url: baseUrl + `/move/forward`
     };
 
-    let alexaPromise = await handlerInput.responseBuilder
-      .speak(speechText)
-      //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
-      .getResponse();
+    await request.get(options);
 
-    let cozmoRequest = request.get(options);
-
-    return { alexaPromise, cozmoRequest };
+    return (
+      handlerInput.responseBuilder
+        .speak(speechText)
+        //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+        .getResponse()
+    );
   }
 };
 
