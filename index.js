@@ -4,6 +4,7 @@
 
 const request = require("request");
 const Alexa = require("ask-sdk-core");
+const baseUrl = "https://lazy-warthog-8.localtunnel.me";
 
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
@@ -11,7 +12,7 @@ const LaunchRequestHandler = {
   },
   handle() {
     const options = {
-      url: `https://bad-chipmunk-44.localtunnel.me/`
+      url: baseUrl
     };
 
     return request.get(options);
@@ -25,10 +26,29 @@ const HelloWorldIntentHandler = {
       handlerInput.requestEnvelope.request.intent.name === "HelloWorldIntent"
     );
   },
-  async handle(handlerInput) {
-    const speechText = "comzo is going to say hello to everyone";
+  handle() {
     const options = {
-      url: `https://bad-chipmunk-44.localtunnel.me/hello/world`
+      url: baseUrl + `/hello/world`
+    };
+
+    return request.get(options);
+  }
+};
+
+const MoveForwardIntentHandler = {
+  canHandle(handlerInput) {
+    return (
+      handlerInput.requestEnvelope.request.type === "IntentRequest" &&
+      handlerInput.requestEnvelope.request.intent.name === "MoveIntent" &&
+      (handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value === "forward" ||
+      handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value === "forwards" || 
+      handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value === "up")
+    );
+  },
+  async handle(handlerInput) {
+    const speechText = "Cozmo is now moving forward";
+    const options = {
+      url: baseUrl + `/move/forward`
     };
 
     let alexaPromise = await handlerInput.responseBuilder
@@ -42,28 +62,6 @@ const HelloWorldIntentHandler = {
   }
 };
 
-const MoveForwardIntentHandler = {
-  canHandle(handlerInput) {
-    return (
-      handlerInput.requestEnvelope.request.type === "IntentRequest" &&
-      handlerInput.requestEnvelope.request.intent.name === "MoveForwardIntent"
-    );
-  },
-  async handle(handlerInput) {
-    const speechText = "Cozmo is now moving forward";
-    const options = {
-      url: `https://bad-chipmunk-44.localtunnel.me/move/forward`
-    };
-
-    await handlerInput.responseBuilder
-      .speak(speechText)
-      //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
-      .getResponse();
-
-    return request.get(options);
-  }
-};
-
 const MoveBackwardIntentHandler = {
   canHandle(handlerInput) {
     return (
@@ -74,7 +72,7 @@ const MoveBackwardIntentHandler = {
   async handle(handlerInput) {
     const speechText = "Cozmo is now moving backward";
     const options = {
-      url: `https://bad-chipmunk-44.localtunnel.me/move/backward`
+      url: baseUrl + `/move/backward`
     };
 
     await handlerInput.responseBuilder
@@ -96,7 +94,7 @@ const CubeStackIntentHandler = {
   async handle(handlerInput) {
     const speechText = "Watch! Cozmo is showing off his cube stacking skill";
     const options = {
-      url: `https://bad-chipmunk-44.localtunnel.me/cubestack`
+      url: baseUrl + `/cubestack`
     };
 
     await handlerInput.responseBuilder
@@ -119,7 +117,7 @@ const DriveToChargerIntentHandler = {
   async handle(handlerInput) {
     const speechText = "Cozmo You did great!";
     const options = {
-      url: `https://bad-chipmunk-44.localtunnel.me/drivetocharger`
+      url: baseUrl + `/drivetocharger`
     };
 
     await handlerInput.responseBuilder
@@ -221,7 +219,6 @@ exports.handler = Alexa.SkillBuilders.custom()
     LaunchRequestHandler,
     HelloWorldIntentHandler,
     MoveForwardIntentHandler,
-    MoveBackwardIntentHandler,
     CubeStackIntentHandler,
     DriveToChargerIntentHandler,
     HelpIntentHandler,
