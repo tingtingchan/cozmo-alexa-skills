@@ -40,11 +40,11 @@ const MoveForwardIntentHandler = {
     return (
       handlerInput.requestEnvelope.request.type === "IntentRequest" &&
       handlerInput.requestEnvelope.request.intent.name === "MoveIntent" &&
-      (handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value ===
+      (handlerInput.requestEnvelope.request.intent.slots.direction.value ===
         "forward" ||
-        handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value ===
+        handlerInput.requestEnvelope.request.intent.slots.direction.value ===
           "forwards" ||
-        handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value ===
+        handlerInput.requestEnvelope.request.intent.slots.direction.value ===
           "up")
     );
   },
