@@ -4,17 +4,18 @@
 
 const request = require("request");
 const Alexa = require("ask-sdk-core");
+const baseUrl = "https://lazy-warthog-8.localtunnel.me";
 
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === "LaunchRequest";
   },
-  handle(handlerInput) {
-    const speechText = "Hello, I am Cozmo. Welcome to the Hackathon.";
-    return handlerInput.responseBuilder
-      .speak(speechText)
-      .reprompt(speechText)
-      .getResponse();
+  handle() {
+    const options = {
+      url: `https://lazy-warthog-8.localtunnel.me/`
+    };
+
+    return request.get(options);
   }
 };
 
@@ -25,10 +26,29 @@ const HelloWorldIntentHandler = {
       handlerInput.requestEnvelope.request.intent.name === "HelloWorldIntent"
     );
   },
-  async handle(handlerInput) {
-    const speechText = "Hello World!";
+  handle() {
     const options = {
-      url: `https://itchy-zebra-79.localtunnel.me/hello/world`
+      url: baseUrl + `/hello/world`
+    };
+
+    return request.get(options);
+  }
+};
+
+const MoveForwardIntentHandler = {
+  canHandle(handlerInput) {
+    return (
+      handlerInput.requestEnvelope.request.type === "IntentRequest" &&
+      handlerInput.requestEnvelope.request.intent.name === "MoveIntent" &&
+      (handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value === "forward" ||
+      handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value === "forwards" || 
+      handlerInput.requestEnvelope.request.intent.slots.MoveIntent.value === "up")
+    );
+  },
+  async handle(handlerInput) {
+    const speechText = "Cozmo is now moving forward";
+    const options = {
+      url: baseUrl + `/move/forward`
     };
 
     await handlerInput.responseBuilder
@@ -40,17 +60,17 @@ const HelloWorldIntentHandler = {
   }
 };
 
-const MoveForwardIntentHandler = {
+const MoveBackwardIntentHandler = {
   canHandle(handlerInput) {
     return (
       handlerInput.requestEnvelope.request.type === "IntentRequest" &&
-      handlerInput.requestEnvelope.request.intent.name === "MoveForwardIntent"
+      handlerInput.requestEnvelope.request.intent.name === "MoveBackwardIntent"
     );
   },
   async handle(handlerInput) {
-    const speechText = "Cozmo is now moving foward";
+    const speechText = "Cozmo is now moving backward";
     const options = {
-      url: `https://itchy-zebra-79.localtunnel.me/move/forward`
+      url: baseUrl + `/move/backward`
     };
 
     await handlerInput.responseBuilder
@@ -72,7 +92,7 @@ const CubeStackIntentHandler = {
   async handle(handlerInput) {
     const speechText = "Watch! Cozmo is showing off his cube stacking skill";
     const options = {
-      url: `https://itchy-zebra-79.localtunnel.me/cubestack`
+      url: baseUrl + `/cubestack`
     };
 
     await handlerInput.responseBuilder
@@ -95,7 +115,7 @@ const DriveToChargerIntentHandler = {
   async handle(handlerInput) {
     const speechText = "Cozmo You did great!";
     const options = {
-      url: `https://itchy-zebra-79.localtunnel.me/drivetocharger`
+      url: baseUrl + `/drivetocharger`
     };
 
     await handlerInput.responseBuilder
@@ -195,8 +215,8 @@ const ErrorHandler = {
 exports.handler = Alexa.SkillBuilders.custom()
   .addRequestHandlers(
     LaunchRequestHandler,
-    HelloWorldIntentHandler,
     MoveForwardIntentHandler,
+    HelloWorldIntentHandler,
     CubeStackIntentHandler,
     DriveToChargerIntentHandler,
     HelpIntentHandler,
