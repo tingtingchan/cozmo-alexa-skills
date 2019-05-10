@@ -87,7 +87,8 @@ def cube_stack(robot: cozmo.robot.Robot):
 
 
 def drive_to_charger(robot: cozmo.robot.Robot):
-    robot.say_text("I am going to take a nap.").wait_for_completed()
+    robot.say_text(
+        "You're welcome. I'm done. Now I am going to take a nap. Bye bye.").wait_for_completed()
 
     '''The core of the drive_to_charger program'''
 
